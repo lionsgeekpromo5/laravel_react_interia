@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Blog;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -15,9 +16,11 @@ class BlogController extends Controller
     public function index()
     {
         $me = Auth::user();
+        $blogs = Blog::with('user')->latest()->get();
         return Inertia::render('blog', [
-            'user' => $me
-        ]);
+            'user' => $me,
+            'blogs' => $blogs
+        ]); 
     }
 
     /**
@@ -33,7 +36,16 @@ class BlogController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'title' => 'required',
+            'paragraph' => 'required'
+        ]);
+
+        Blog::create([
+            'title' => $request->title,
+            'paragraph' => $request->paragraph,
+            'user_id' => Auth::id()
+        ]);
     }
 
     /**

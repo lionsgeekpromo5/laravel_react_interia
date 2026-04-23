@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('blogs', function (Blueprint $table) {
             $table->id();
+            $table->string('title');
+            $table->longText('paragraph');
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }
