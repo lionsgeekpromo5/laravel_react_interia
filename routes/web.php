@@ -12,6 +12,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
     Route::get('/blog', [BlogController::class, 'index']);
     Route::post('/blog/store', [BlogController::class, 'store']);
+    Route::put('/blog/update/{blog}', [BlogController::class , 'update']);
 });
 
 require __DIR__.'/settings.php';

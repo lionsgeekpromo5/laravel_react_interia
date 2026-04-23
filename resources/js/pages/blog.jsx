@@ -1,119 +1,228 @@
+import { router, useForm, usePage } from '@inertiajs/react';
+import { Loader2 } from 'lucide-react';
 import {
     Dialog,
     DialogTrigger,
     DialogContent,
-    DialogHeader,
     DialogTitle,
-    DialogDescription,
     DialogFooter,
-    DialogClose,
 } from '@/components/ui/dialog';
-import { router, useForm, usePage } from '@inertiajs/react';
+import { Button } from '@/components/ui/button';
+
 import React, { useState } from 'react';
 
 function Blog() {
-
-
     const { user, blogs } = usePage().props;
-    console.log(blogs);
+    const [onUpdate, setOnupdate] = useState(false);
+    const [selectedBlog, setSelectedBlog] = useState(null);
+    console.log(selectedBlog);
     
+    const { data, setData, post, errors, reset, processing, put } = useForm({
+        title: '',
+        paragraph: '',
+    });
 
-    const {data, setData, post, errors, reset, processing} = useForm({
-        'title': '',
-        'paragraph': ''
-    })
+    console.log(data);
 
     const submit = (e) => {
-        e.preventDefault()
-        post('/blog/store')
-        reset('title', 'paragraph')
+        e.preventDefault();
+        post('/blog/store');
+        reset('title', 'paragraph');
         console.log(data);
-        
+    };
+
+    const updateBlog = (e) => {
+        e.preventDefault()
+
+        put(`/blog/update/${selectedBlog?.id}`)
+        reset('title', 'paragraph')
+
+
     }
-
-
-
 
     return (
         <div>
-      <form
-        onSubmit={submit}
-        className="bg-white shadow-lg rounded-xl p-6 w-full border flex items-center gap-x-2 "
-      >
-        <h2 className="text-xl font-semibold">Create Post</h2>
+            {/* Add Blog */}
+            <Dialog>
+                <DialogTrigger>
+                    <Button>Add Blog</Button>
+                </DialogTrigger>
+                <DialogContent>
+                    <DialogTitle>Add your blog here</DialogTitle>
 
-        {/* Title */}
-        <div className="flex items-center gap-x-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Title
-          </label>
-          <input
-            type="text"
-            name="title"
-            placeholder="Enter title..."
-            required
-            onChange={(e) => setData('title', e.target.value)}
-            value={data.title}
-            className=" rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+                    <form
+                        onSubmit={submit}
+                        className="flex w-full flex-col gap-x-2 gap-y-2 rounded-xl border bg-white p-2 shadow-lg"
+                    >
+                        <h2 className="text-xl font-semibold">Create Post</h2>
 
-        </div>
+                        {/* Title */}
+                        <div className="flex items-center gap-x-2">
+                            <label className="block text-sm font-medium text-gray-700">
+                                Title
+                            </label>
+                            <input
+                                type="text"
+                                name="title"
+                                placeholder="Enter title..."
+                                required
+                                onChange={(e) =>
+                                    setData('title', e.target.value)
+                                }
+                                value={data.title}
+                                className="rounded-lg border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            />
+                        </div>
 
-        {/* Paragraph */}
-        <div className="flex items-center gap-x-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Paragraph
-          </label>
-          <textarea
-            name="paragraph"
-            placeholder="Write your content..."
-            required
-            value={data.paragraph}
-            onChange={(e) => setData('paragraph', e.target.value)}
-            className=" rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-          />
-        </div>
+                        {/* Paragraph */}
+                        <div className="flex items-center gap-x-2">
+                            <label className="block text-sm font-medium text-gray-700">
+                                Paragraph
+                            </label>
+                            <textarea
+                                name="paragraph"
+                                placeholder="Write your content..."
+                                required
+                                value={data.paragraph}
+                                onChange={(e) =>
+                                    setData('paragraph', e.target.value)
+                                }
+                                className="resize-none rounded-lg border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            />
+                        </div>
 
-        {/* Submit */}
-        <button
-          type="submit"
-          disabled={processing}
-          className=" bg-blue-600 text-white py-1.5 px-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
-        >
-            {processing ? 'saving .....' : 'submit'}
-        </button>
-      </form>
-      {/* articles */}
+                        {/* Submit */}
+                        <button
+                            type="submit"
+                            disabled={processing}
+                            className="rounded-lg bg-blue-600 px-2 py-1.5 text-white transition hover:bg-blue-700 disabled:opacity-50"
+                        >
+                            {processing ? 'saving .....' : 'submit'}
+                        </button>
+                    </form>
+                </DialogContent>
+            </Dialog>
 
+            {/* update Modal */}
 
-        <div class="max-w-screen-xl mx-auto py-8 px-4 lg:py-16 lg:px-6">
-    <div class="text-center mb-10">
-        <h2 class="text-4xl tracking-tight font-bold text-primary-800">Highlighted Features</h2>
-    </div>
+            <Dialog open={onUpdate} onOpenChange={setOnupdate}>
+                <DialogTrigger>
+                    <Button>Update Blog</Button>
+                </DialogTrigger>
+                <DialogContent>
+                    <DialogTitle>Update your blog here</DialogTitle>
 
-    <div class="flex flex-col md:flex-row">
+                    <form
+                        
+                        className="flex w-full flex-col gap-x-2 gap-y-2 rounded-xl border bg-white p-2 shadow-lg"
+                    >
+                        <h2 className="text-xl font-semibold">Create Post</h2>
 
+                        {/* Title */}
+                        <div className="flex items-center gap-x-2">
+                            <label className="block text-sm font-medium text-gray-700">
+                                Title
+                            </label>
+                            <input
+                                type="text"
+                                name="title"
+                                placeholder="Enter title..."
+                                required
+                                onChange={(e) =>
+                                    setData('title', e.target.value)
+                                }
+                                value={
+                                    data.title
+                                        ? data.title
+                                        : selectedBlog?.title
+                                }
+                                className="rounded-lg border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            />
+                        </div>
 
-        <div class="flex-1 flex flex-col sm:flex-row flex-wrap -mb-4 -mx-2">
-            {
-                blogs?.map((blog) => (
-            <div class="w-full sm:w-1/2 mb-4 px-2 ">
-                <div class="h-full py-4 px-6 border border-green-500 border-t-0 border-l-0 rounded-br-xl">
-                    <h3 class="text-2xl font-bold text-md mb-3">{blog.title}</h3>
-                    <h3 class="text-sm font-bold text-md text-blue-800 ">{blog.user.name}</h3>
-                    <p class="text-sm">{blog.paragraph}</p>
+                        {/* Paragraph */}
+                        <div className="flex items-center gap-x-2">
+                            <label className="block text-sm font-medium text-gray-700">
+                                Paragraph
+                            </label>
+                            <textarea
+                                name="paragraph"
+                                placeholder="Write your content..."
+                                required
+                                value={
+                                    data.paragraph
+                                        ? data.paragraph
+                                        : selectedBlog?.paragraph
+                                }
+                                onChange={(e) =>
+                                    setData('paragraph', e.target.value)
+                                }
+                                className="resize-none rounded-lg border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            />
+                        </div>
+
+                        {/* Submit */}
+                        <button
+                            type="submit"
+                            onClick={updateBlog}
+                            disabled={processing}
+                            className="rounded-lg bg-blue-600 px-2 py-1.5 text-white transition hover:bg-blue-700 disabled:opacity-50"
+                        >
+                            {processing ? 'saving .....' : 'submit'}
+                        </button>
+                    </form>
+                    <DialogFooter>
+                        <button
+                            className="rounded-md bg-red-400 px-2 py-1.5"
+                            onClick={() => {
+                                setSelectedBlog(null);
+                                setOnupdate(false);
+                                reset();
+                            }}
+                        >
+                            Close
+                        </button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* articles */}
+
+            <div class="mx-auto max-w-screen-xl px-4 py-8 lg:px-6 lg:py-16">
+                <div class="mb-10 text-center">
+                    <h2 class="text-primary-800 text-4xl font-bold tracking-tight">
+                        Highlighted Features
+                    </h2>
                 </div>
-            </div>                ))
-            }
 
-
-
-
+                <div class="flex flex-col md:flex-row">
+                    <div class="-mx-2 -mb-4 flex flex-1 flex-col flex-wrap sm:flex-row">
+                        {blogs?.map((blog) => (
+                            <div class="mb-4 w-full px-2 sm:w-1/2">
+                                <div class="h-full rounded-br-xl border border-t-0 border-l-0 border-green-500 px-6 py-4">
+                                    <h3 class="text-md mb-3 text-2xl font-bold">
+                                        {blog.title}
+                                    </h3>
+                                    <h3 class="text-md text-sm font-bold text-blue-800">
+                                        {blog.user.name}
+                                    </h3>
+                                    <p class="text-sm">{blog.paragraph}</p>
+                                    <button
+                                        className="font-bold text-blue-300"
+                                        onClick={() => {
+                                            setOnupdate(true);
+                                            setSelectedBlog(blog);
+                                        }}
+                                    >
+                                        Edit
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
-    </div>
-            
     );
 }
 

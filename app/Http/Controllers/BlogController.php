@@ -69,7 +69,12 @@ class BlogController extends Controller
      */
     public function update(Request $request, Blog $blog)
     {
-        //
+        
+
+        $blog->update([
+            'title' => $request->title,
+            'paragraph' => $request->paragraph
+        ]);
     }
 
     /**
